@@ -1,0 +1,25 @@
+sample(10000,35)
+
+### vamos a crear una pequeña base de datos
+# usaremos 4 variables: nombre, edad, sexo, tipo de educación
+
+nombres <- c ("sergio", "alan", "betzabeth", "judith", "rodrigo", "eric", "diego", "angel")
+edad <- c (36, 20, 23, 20, 21,21,22,21)
+sexo <- c ("hombre","hombre", "mujer", "mujer","hombre","hombre","hombre","hombre")
+educa <- c ("publica","publica","publica","privada","privada","publica","publica","publica")
+# generamos una base en forma matricial 
+base1 <- matrix (c(nombres, edad, sexo, educa))# esta no nos genero la matriz por los caracteres
+# creamos la base con data.frame
+base1.1 <- data.frame(nombres, edad, sexo, educa)
+#usaremos la funcion table para *conocer la frecuencia* de las diferentes variables
+table (base1.1$edad)
+table (base1.1$educa)
+table (base1.1$nombres)
+table (base1.1$sexo)
+#y esta es una forma de simplificar el codigo diciendo que lo que escribamos va referenciado a la base1.1
+attach(base1.1)
+table(edad)
+table(sexo)
+#para salir del atajo, para cerrar el attach
+detach(base1.1)
+summary(base1.1$edad)
