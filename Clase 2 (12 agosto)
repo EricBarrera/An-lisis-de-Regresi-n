@@ -1,0 +1,50 @@
+# LIMIAR EL ENTORNO DE TREBAJO(DATA Y VALUES)
+#rm(list=ls())
+#para borrar la consola hay que poner el cursor ahi y control L
+##### Definir el directorio raiz de las bases de datos
+setwd("C://Users//eric//Desktop//clases de regresion//sdemt215")
+install.packages("foreign")
+require (foreign)
+SDEMT215<-data.frame(read.dbf("SDEMT215.dbf"))
+
+##
+####################################Frecuencias con datos muestrales sin ponderar
+View(sociodem) ## ver la tabla sociodem
+install.packages("questionr")##instalamos esta paqueteria porque es necesaria
+require(questionr)
+wtd.table(sociodem$POS_OCU)## nos da la frecuencia de esta parte de la tabla, el 0 significa a los que no les hicieron esta pregunta
+#1,2,3,4 son las respuestas que dan y el 5 no aparece y segun la tabla significa no especificado y parece no haber por eso no aparece
+wtd.table(sociodem$POS_OCU,na.show=TRUE)# da igual los valores de la tabla pero muestra los valores perdidos <NA> y no hay datos perdidos
+
+
+########################## Frecuencias con datos ponderedos o expandidos 
+#cada persona vale por mas porque las demas son similares y solo se muestre una aunque existen mas
+wtd.table(sociodem$POS_OCU,weights=sociodem$FAC,na.show=TRUE) #muestra los datos reales (ponderados) y vemos que ya se manejan los millones en la pob
+
+
+######################### TABULADOS CON DATOS MUESTRALES (SIN PONDERAR)
+#METODO 1
+wtd.table(sociodem$SEX,sociodem$POS_OCU)### Da la tabla clasificando hombres y mujeres(1,2) y en que se ocupan(0,1,2,3,4,5)
+
+######################## TABULADOS CON DATOS PONDERADOS
+wtd.table(sociodem$SEX,sociodem$POS_OCU,weights= sociodem$FAC)# Da la tabulacion con sexo (1,2) y ocupacion (0,1,2,3,4,5) pero con datos ponderados (FAC)
+
+
+######### EJERCICIO
+#1) OBTENER LA FRECUENCIA DE LA VARIABLE CLASE1 (MUESTRAL)
+wtd.table(sociodem$CLASE1)
+#2) OBTENER EL TABULADO DE ENTIDAD Y SEXO (MUESTRAL Y PONDERADO)
+wtd.table(sociodem$ENT,sociodem$SEX)
+
+wtd.table(sociodem$ENT,sociodem$SEX,weights= sociodem$FAC)
+
+
+######################################## ETIQUETAR VARIABLES: DAR NOMBRES A LAS VARIABLES
+#1
+sociodem$SEXO <- factor(sociodem$SEX, levels=c(1,2), labels=c("HOMBRE", "MUJER"))# crea una nueva variable SEXO y la relaciona con la de la tabla SEX 
+# para dar nombre a los numeros 1= HOMBRE y 2=MUJER. Esta variable aparecera en a tabla si y solo si aun hay espacio, si no hay espacio no la veremos pero ahi estara
+wtd.table(sociodem$SEXO) #comprobamos 
+
+#2 ETIQUETAR EN LA MISMA VARIABLE
+sociodem$POS_OCU <- factor(sociodem$POS_OCU, levels=c(1,2,3,4,5), labels=c("SUBORDINADOS Y REMUNERADOS", "EMPLEADORES", "CUENTA PROPIA","SIN PAGO", "NE"))
+wtd.table(sociodem$POS_OCU)
