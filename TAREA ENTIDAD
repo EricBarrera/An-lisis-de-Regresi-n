@@ -1,0 +1,5 @@
+# TAREA PARA EL JUEVES ETIQUETAR LA VARIABLE ENTIDAD MANDARSELO A SU CORREO Y AL GITHUB
+sociodem$ENT <- factor(sociodem$ENT, levels=c(01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32), labels=c("AGUASCALIENTES","BAJA CALIFORNIA","BAJA CALIFORNIA SUR", "CAMPECHE", "COAHUILA", "COLIMA", "CHIAPAS", "CHIHUAHUA", "CIUDAD DE MÉXICO",
+                                                                                                                                                         "DURANGO", "GUANAJUATO", "GUERRERO", "HIDALGO", "JALISCO", "MÉXICO", "MICHOACAN", "MORELOS", "NAYARIT", "NUEVO LEON", "OAXACA", "PUEBLA",
+                                                                                                                                                         "QUERETARO", "QUINTANA ROO", "SAN LUIS POTOSI", "SINALOA", "SONORA", "TABASCO", "TAMAULIPAS", "TLAXCALA", "VERACRUZ", "YUCATAN", "ZACATECAS"))
+wtd.table(sociodem$ENT)
