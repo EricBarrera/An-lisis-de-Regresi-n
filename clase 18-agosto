@@ -1,0 +1,60 @@
+#****************************************************************************************** CLASE 18-AGOSTO-2016
+#3 TABULADO DE LAS VARIABLES ETIQUETADAS
+wtd.table(sociodem$POS_OCU, sociodem$SEXO)
+
+
+
+#********************************* RECODIFICAR VARIABLES DE TIPO CARACTER
+#METODO 1
+sociodem$EDAD11[as.numeric(sociodem$EDA)>= 0 & as.numeric(sociodem$EDA)<= 10] <-1   #CREA UNA VARIABLE NUEVA LLAMADA EDAD11 Y NOS DA LAS EDADES EN RANGOS ESTOS RANDOS SE LLAMARAN 1,2, 3, 4, 5
+sociodem$EDAD11[as.numeric(sociodem$EDA)>= 11 & as.numeric(sociodem$EDA)<= 20] <-2  # as numeric SIRVE PARA CONVERTIR UNA VARIABLE CARACTER A NUMERICA, as.caracter CONVIERTE NUMEROS A CARACTER
+sociodem$EDAD11[as.numeric(sociodem$EDA)>= 21 & as.numeric(sociodem$EDA)<= 30] <-3
+sociodem$EDAD11[as.numeric(sociodem$EDA)>= 31 & as.numeric(sociodem$EDA)<= 40] <-4
+sociodem$EDAD11[as.numeric(sociodem$EDA)>= 41] <-5
+ls(sociodem) # MUESTRA TODAS LAS VARIABLES QUE TENGO EN LA TABLA SOCIODEM PARA VER SI YA ESTA EDAD11
+table(sociodem$EDAD11)
+#####
+sociodem$EDAD11 <- factor(sociodem$EDAD11, levels=c(1,2,3,4,5), labels=c("RANGO DE 0 A 10 AÑOS", "RANGO DE 11 A 20 AÑOS",
+                                                                         "RANGO DE 21 A 30 AÑOS","RANGO DE 31 A 40 AÑOS",
+                                                                         "RANGO DE 41 AÑOS EN ADELANTE")) # Les damos un nombre a cada rango que creamos
+wtd.table(sociodem$EDAD11)# Para ver la tabla con los nombres
+
+class(sociodem$ENT) # Vemos que tipo de variable es la variable ENT, la variable factor es como una cadena
+sociodem$ENT <- (as.character(as.numeric(sociodem$ENT))) #Convierte la variabla factor a caracter
+class(sociodem$ENT)# Volvemos a ver que tipo de variable es para comprobar
+
+####### METODO 3********* Hace lo mismo que el anterior pero es mejor
+sociodem$EDAD11 <- ifelse(as.numeric(sociodem$EDA) >=0 & as.numeric(sociodem$EDA) <= 10,1,
+                          ifelse(as.numeric(sociodem$EDA) >=11 & as.numeric(sociodem$EDA) <= 20,2,
+                                 ifelse(as.numeric(sociodem$EDA) >=21 & as.numeric(sociodem$EDA) <= 30,3,
+                                        ifelse(as.numeric(sociodem$EDA) >=31 & as.numeric(sociodem$EDA) <= 40,4,5,) # con el 5 r entiende que el resto va en el 5
+        
+table(sociodem$EDAD11)
+
+####### RECODIFICAR VARIABLES DE TIPO CARACTER
+class(sociodem$R_DEF)
+sociodem$VALIDO[as.character(sociodem$R_DEF)== "00"] <- "ENTREVISTA COMPLETA"   # creamos una variable llamada VALIDO, despues ponemos una etiqueta para clasificar una variable
+sociodem$VALIDO[as.character(sociodem$R_DEF)!="00"] <- "ENTREVISTA INCOMPLETA"   
+
+wtd.table(sociodem$VALIDO)
+
+##################*****************************
+# 5 SUBCONJUNTOS DE DATOS
+# 5.1 SELECCIONANDO VARIABLES DE INTERES
+# METODO 1
+var <- c("R_DEF", "LOC", "MUN", "C_RES")
+newdata1 <- sociodem[,var]# prmera entrada renglon, la seg columna[ , var] deja la tabla igual, si quisiereamos invertirlo, solo necesitamos escribirla al reves [ var, ]
+#newdata1 <- sociodem[var,]
+
+###### SELECCIONAR CASOS U OBSERVACIONES se usa la fn subset()
+
+mujer <- subset(sociodem,sociodem$SEX==2) # Elegimos solo los datos que queremos, en este caso mujeres, pero creamos una nueva variable
+table(mujer$SEX) # comprobamos que en la variable mujeres ya no hay hombres
+
+class(mujer$CD_A)
+
+###### Si le movemos mucho al script, debemos correr de nuevo la tabla desde el inicio para regresarla al origen
+mujer$CD_A <- as.character(mujer$CD_A) # es factor, la cambiamos a caracter
+class(mujer$CD_A) # comprobamos
+mujer1 <- subset(mujer, mujer$CD_A=="02" | mujer$CD_A=="16") # SIGNO O= "|", escogemos datos diferentes que queremos 
+table (mujer1$CD_A) # creamos una nueva variable mujer1 para que se guarden los cambiao de mujeres de toluca y guadalajara
