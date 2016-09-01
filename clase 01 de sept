@@ -1,0 +1,38 @@
+#estaturas 1.2, 1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15
+## nivel economico 110, 130, 108, 167, 156, 115, 104, 138, 170, 107
+#####******* COMPROBAMOS SI SE PUEDE AJUSTAR UNA RECTA GRAFICANDO
+
+estat <- c(1.2, 1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15)
+niveco <- c(110, 130, 108, 167, 156, 115, 104, 138, 170, 107)
+plot(niveco, estat, pch=11, xlab="ingreso economico", ylab="estatura", main="grafica de disperción", col= "blue")
+### CALCULAMOS EL COEFICIENTE DE CORRELACION
+cor(niveco, estat, method="pearson")
+# EL RESULTADO ARROJA QUE HAY MUY ALTA RELACION Y POSITIVA, USAMOS LA PRUEBA COR.TEST PARA VER QUE LA CORRELACION EXISTE
+cor.test(estat, niveco, method="pearson")
+# LA PRUEBA DE HIPOTESIS PARA ESTA FUNCION ES Ho=r=0, ES DECIR NO HAY RELACION, ha=!
+#ES DECIR MISMA LOGICA QUE COR()
+
+# LA H0(NO HAY RELACION ENTRE ESTAS VARIABLES) DECIA QUE SI P-VALUE ERA MENOR DE .05 SE RECHAZABA LA H0, SE ACEPTA LA H1(HIP ALTERNATIVA) OSEA CON UN 95% DE CONFIANZA 
+#DECIMOS QUE SI HAY RELACION ENTRE LAS VARIABLES
+
+#SI EXISTE RELACION, APLICAMOS EL MODELO DE REG LIN SIMPLE CON LA FN lm()
+
+mod1 <- lm(estat~niveco)
+summary(mod1)
+#LOS RESIDUALES NOS GENERAN LAS DIFERENCIAS ENTRE LOS VALORES AJUSTADOS Y LOS REALES
+#EN LOS RESULTADOS TENEMOS LOS COEFICIENTES QUE CONTIENEN......... QUE EXPONE SI LOS COEF SON SIGNIFICATIVOS
+
+#GRAFICAMOS DE NUEVO LA GRAF DE DISPERCION
+plot(niveco, estat, pch=11, xlab="ingreso economico", ylab="estatura", main="grafica de disperción", col= "blue")
+# SI SALE ERROR DE PLOT NEW FIGURE MARGINS... HAY QUE AGRANDAR LA VENTANA DONDE SALDRA LA GRAFICA, NO SALE PORQUE NO TIENE ESPACIO
+abline(mod1) # DA LA RECTA AJUSTADA EN LA GRAFICA
+#con esto decimos que tenemos una ecuacion segun los datos que obtubimos lo vemos en intercept y niveco
+estat=.9323+.0023 eco
+# HIPOTESIS: por cada peso mas que gane, mi hijo crecera .0023cm mas
+# ó entre mas dinero gane, mas estatura tendrá mi hijo
+
+### TAREA PARA LUNES: hacer un modelo como este con variables reales, crear la hipotesis como la del ejercicio, minimo son 16 datos, puede ser anual
+
+
+
+names(mod1)
