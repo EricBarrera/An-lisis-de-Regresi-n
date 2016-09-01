@@ -1,0 +1,41 @@
+rm(list=ls())
+
+require (foreign)
+sociodem <- read.dbf ("C://Users//eric//Desktop//clases de regresion//sdemt215//SDEMT215.dbf")
+View(sociodem)
+ #AGUASCALIENTES=01, VERACRUZ=30
+require(questionr)
+
+wtd.table(sociodem$ENT)
+wtd.table(sociodem$ENT,na.show=TRUE)
+wtd.table(sociodem$SEX,sociodem$ENT,weights= sociodem$FAC)
+
+var <- c("ENT", "SEX")
+newdata1 <- sociodem[,var]
+View (newdata1)
+
+wtd.table(sociodem$SEX,sociodem$POS_OCU,weights= sociodem$FAC)
+##############################################################
+require (foreign)
+
+
+sociodem <- read.dbf("C://Users//eric//Desktop//clases de regresion//sdemt215//SDEMT215.dbf")
+
+
+####Entidades 16=Michoacan 26=Sonora
+
+
+sdemt$ENT1 <- as.mujer(as.character(sociodem$ENT))
+
+
+var<-c("ENT", "POS_OCU", "SEX")
+tabla1 <- subset (SDEMT215,SDEMT215$ENT == 2)
+tabla1 <- SDEMT215[,var]
+
+
+mujer <- subset (SDEMT215,SDEMT215$SEX == 2)
+View(var)
+View(newdata1)
+
+
+ <- subset (SDEMT215,SDEMT215$SEX == 2)
