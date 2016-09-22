@@ -1,0 +1,47 @@
+#################CLASE DEL 22 DE SEPT
+install.packages("car")
+require(car)
+base1<- data.frame(niveco,estat)
+base1$ajuste.mod1<- fitted(mod1)#agrega la columna de valores ajustado a la tabla base 1 , y gorrito
+base1$residuales.mod1<-residuals(mod1)# residuos del modelo, es el error yi-ygorrito
+base1$rstudent.mod1<-rstudent(mod1)# residuos estudentizados
+shapiro.test(base1$rstudent.mod1)
+#purea de shapiro test
+##Ho. La muestra tiene una dist normal
+###ha: la dist no tiene dist normal
+#### tenemos un p-value de 0.8172, asi que no se rechaza la Ho, se acepta que hay normalidad
+##### ahora veremos este resultado en un grafico
+qqnorm(base1$rstudent.mod1,main="normal(0,1")
+# se obtiene grafico de dispercion normal 0,1
+## en la grafica parece que no tiene dist normal pero paso la prueba de shapiro test asi que es suficiente, lo ideal seria que pase las dos pruebas
+qqline(base1$rstudent.mod1)
+
+
+install.packages("lmtest")
+require(lmtest)
+bptest(mod1)
+# en esta prueba esperamos que haya homogeneidad de la var, Ho si hay homog en las var y Ha no hay homog en las var
+# en la prueba bptest obtenemos un p value de 0.6108 por lo tanto no se rechaza la Ho, se acepta con un 95% de conf 
+# para eso el p value debe ser mayor a 0.5, para mod1 hay homog en las var
+## prueba de autocorrelacion o independencia, se utiliza la prueba Durbin Watson 
+dwtest(mod1, alternative="two.sided" )
+# nos da un p value de 0.9142 por lo que no se rechaza la Ho, tenemos un p value mayor a 0.5, no hay autocorrelacion en los residuos
+## otra forma de evaluar la prueba dw es con el valur de dw que se espera que este en el rango 1.5 y 2.5, si esta dentro de 
+## este rango se dice que no hay autocorrelacion en los residuos
+### comprobamos de manera grafica
+plot(base1$residuales.mod1, pch=35, ylab="residuales", xlab="in", col=33)
+abline(h=cor(base1$estat,base1$niveco))
+# vemos que tenemos       sin patron 
+#ya con estos datos podremos garantizar que tenemos un buen modelo 
+#y podemos predecir o analizar los coeficientes
+### podriamos tener un problema de rangos si predecimos sin considerar rangos de nuestra variable, asi que definimos una nueva base 
+### con limites
+limbase1<- seq(min(base1$niveco), max(base1$niveco), length=10)
+limbase1<-data.frame(limbase1)
+limbasep<-predict.lm(mod1,limbase1,interval="prediction",se.fit=TRUE, data=base1)
+head(limbasep$fit)# genera los limites*
+#para dibujar los limites
+matplot(limbase1, limbasep$fit,type="l",xlab="ingres",ylab="estatu")
+
+####TAREA ETIQUETAR LOS RANGOS Y DATOS REALES EN LA GRAFICA
+#1- ESTA ES EL RANGO SUP, 2- ESTE ES EL RANGO INF Y 3- ESTOS SON LOS DATOS REALES
