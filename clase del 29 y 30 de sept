@@ -1,0 +1,93 @@
+install.packages("foreign")
+require(foreign)
+rm(list = ls())
+#### MODELO DE REGRESIÓN MÚLTIPLE
+capa <- c(4330,5500,5500,4700,5200,5500,4700,5500,5800,5000) #var independ x2
+calidad <- c(2,3,4,3,4,4,4,5,5,5) #independ x3
+precio <- c(190,219,249,249,250,340,289,395,439,525)# var dependiente y
+mochil <- data.frame(precio,capa,calidad)
+# APLICAMOS UNA CORRELACION
+cor(mochil, use= "everything", method="pearson")
+# EL MODELO TIENE CORRELACIONES DIVERSAS, APLICAMOS EL MODELO
+modmo <- lm(precio~calidad+capa)
+# se revisa la r2 ajustada por ser un mRM tenemos una R2 ajustada de .7 lo que implica que la recta de regresion
+# explica en 70% la variabilidad del modelo revisando el valor F y p value tenemos que si cumple con los criterios de
+# un buen ajuste (F>1 y PVALUE<.5) con estos datos podemos mencionar que estamos ante un buen modelo por lo que se pasa 
+# al diagnostico. El diagnost se realiza para poder generalizar los resultados del modelo a partir de la revision de los 
+# supuestos, en primer lugar se contrastan los valores residuales contra los valores ajustados 
+## se realiza con la fn plot y el argumento witch=1, pch cambia las formas de la grafica
+plot(modmo, wich=1, pch=3)
+# esperamos que los supuestos se distribuyan sin patron, una tendencia en la variabilidad de los residuos sugiere que la varianza 
+# este relacionada con la media, violando el supuesto de varianza constante
+################################################ SUPUESTO DE NORMALIDAD#########################
+plot(modmo, wich=2,pch=3)
+# en este caso esperamos que los residuos tipificados alrededor de la linea, se observa que si hay dist normal
+############################# TERCER SUPUESTO#######################################################
+# los residuos estan estandarizados por sus desviaciones estandar estimadas
+plot(modmo, wich=3,pch=3)
+# aqui vemos si los residuos se distribuyen constantes en los valores ajustados, una grafica sin patron observable
+############################ CUARTO SUPUESTO###########################################
+plot(modmo, wich=5,pch=3)
+# expone la importancia de cada observ en el modelo, en esta distancia el grafico nos muestra las observaciones que podran 
+# impactar en el modelo, por lo que se sugiere eliminarlas
+
+##### tarea quitar las observaciones incongruentes(1,7 y 10) con el data.frame, despues cmprbar si hay mayor correlacion, 
+# si mejoran los resultados
+mochil1 <- mochil[c(-1,-7,-10), ]
+# eliminamos las filas 1,7 y 10, el espacio en blanco corresponde a las columnas si quisieramos quitar una columna nadamas es asi
+# mochil2 <- mochil[c( ,-2)]
+View(mochil1)
+#M1
+modmo <- lm(precio~calidad+capa, mochil1)
+#M2
+modmo1 <- lm(mochil1$precio~calidad+mochil1$capa, mochil1)
+######################## CLASE 30 SEPT 2016########################################
+# DESPUES DE AN ALIZAR GRAFICAMENTE SE APLICAN PRUEBAS PARA CONFIRMAR QUE EL MRM SI CUMPLE LOS SUPUESTOS, PARA APLICAR LAS 
+# PRUEBAS SE GENERAN LOS VALORES AJUSTADOS, RESIDUALES Y ESTANDARIZADOS
+mochil$ajustados <- fitted(modmo)#con fitted obtenemos los valores ajustados del modelo modmo
+mochil$resid <- residuals(modmo)
+View(mochil)# de preferencia hay que poner el view en la consola no en el script
+mochil$rstud <- rstudent(modmo)
+# prueba de normalidad, usamos la paqueteria de lmtest
+install.packages("lmtest")
+require(lmtest)
+ks.test(mochil$rstud,"pnorm")
+# se plantea la prueba de hipotesis y se espera un p value mayor a 0.5, si pvalue>0.5 no se rechaza la Ho y se acepta 
+# que hay normalidad
+## la segunda prueba que se hace es la homogeneidad de varianzas, y esta prueba se realiza con la fn bptest
+bptest(modmo, studentize= FALSE, data=mochil)
+# tenemos un pvalue mayor a 0.05 por lo tanto pasa la prueba de homogeneidad de varianzas
+### la tercera prueba es de autocorrelacion, esta se llama durbin watson, su fn es dw()
+dwtest(modmo, alternative= "two.sided", data=mochil)
+# en esta prueba hay dos formas de comprobar, 1- el p value mayor a 0.05
+#                                             2- el valor de dw(rango aceptable 1.5 a 2.5)
+#esto quiere decir que hay independencia entre los errores porque no hay correlacion
+## hasta este punto podemos confirmar que no hay correlacion entre residuos. Ccon las pruebas confirmamos que tenemos un modelo 
+## con buen ajuste, sin enbargo hay que revisar los casos atipicos
+install.packages("car")
+require(car)
+outlierTest(modmo)
+outlier.test(modmo)
+# una vez que observamos los casos atipicos procedemos a conocer la influencia de estos casos, en el modelo para observar
+# la influencia se utiliza la fn influence.measures()
+influ <- influence.measures(modmo)
+summary(influ)
+# en la primera columna se observa los casos mas influyentes que en este modelo son 1,2 y 10, las columnas que hacen referencia a 
+# dfb nos indican la influencia en los coeficientes del modelo, las columnas que nos presentan mayor interes son las cook.d
+# y hat que nos exponen con mayor claridad la influencia el cook.d es la dist de cook y entre mas cercano a uno hay mayor influencia
+# de la obsrvacion en este caso a obs 10 es la que tiene mayor distancia de cook, en esta distancia, valores mayores a uno
+# hay certeza de que si influyen en la columna de hat se asocia con las medidas de leverage que varian entre 0 y 1, entre mas cercano
+# a 1, mayor influencia
+## ademas de estas pruebas se hace analisis grafico de los casos influyentes, para esto tenemos la fn influenceplot requiere lib car
+## el analisis de este grafico se realiza con base en el tamaño de las circunferencias que arroja, es decir, a mayor circunferencia
+## el cas tiene mayor influencia
+influencePlot(modmo)
+#grafica de distancia de cook se requiere de la libreria faraway
+install.packages("stats")
+require(stats)
+install.packages("faraway")
+require(faraway)
+cooks.distance(modmo)
+distcook <- cooks.distance(modmo)
+etiqueta <- rownames(mochil)
+halfnorm(distcook,3, etiqueta)
