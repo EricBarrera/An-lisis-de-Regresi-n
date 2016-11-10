@@ -1,0 +1,43 @@
+install.packages("foreign")
+require(foreign)
+install.packages("questionr")
+require(questionr)
+#install.packages("library")
+#require(library)
+
+setwd("C:/Users/Sala-C26/Desktop")
+
+sdem215 <- read.dbf("sdemt216.dbf")
+coe1 <- read.dbf("coe1t216.dbf")
+coe2 <- read.dbf("coe2t216.dbf")
+# lee cada archivo
+rm(list = ls())
+folio <- paste(sdem215$CD_A,sdem215$ENT,sdem215$CON, sdem215$V_SEL, sdem215$N_HOG, sdem215$H_MUD, sdem215$N_REN)
+x <- data.frame(sdem215, folio)
+
+folio <- paste(coe1$CD_A,coe1$ENT,coe1$CON, coe1$V_SEL, coe1$N_HOG, coe1$H_MUD, coe1$N_REN)
+x2 <- data.frame(coe1, folio)
+
+
+folio <- paste(coe2$CD_A,coe2$ENT,coe2$CON, coe2$V_SEL, coe2$N_HOG, coe2$H_MUD, coe2$N_REN)
+x3 <- data.frame(coe2, folio)
+#generamos un folio para cada archivo(sdem215,coe1,coe2) que incluya cada variable que esta definida dentro del parentesis
+
+total <- merge(x,x2,by="folio",all.x=TRUE)
+# pegamos las bases x y x2
+
+totalenoe <- merge(total,x3,by="folio",all.x=TRUE)
+#pegamos las bases total(x y x2) y x3
+
+ls(x)
+ls(x2)
+ls(x3)
+# vemos las variables de cada x
+
+wtd.table(totalenoe$SEX, totalenoe$P1, weights = totalenoe$FAC)
+# O DE ESTA FORMA
+table(totalenoe$SEX, totalenoe$P1)
+##############################################
+wtd.table(totalenoe$EDA.x, weights = totalenoe$FAC.x)
+
+sum(wtd.table(totalenoe$EDA.x, weights = totalenoe$FAC.x))
