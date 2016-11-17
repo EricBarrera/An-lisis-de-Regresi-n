@@ -1,0 +1,43 @@
+install.packages("foreign")
+require(foreign)
+install.packages("questionr")
+require(questionr)
+library(foreign)
+
+rm(list = ls())
+install.packages("Hmisc")
+library(Hmisc)
+
+setwd("C:/Users/Sala-C26/Desktop")
+mti2015 <- spss.get("solorural.sav")
+wtd.table(mti2015$eda1) # Da la frecuencia de los diferentes grupos de edades
+# 1= 5-9 años
+# 2= 10-14 años
+# 3= 15-17
+wtd.table(mti2015$sex,mti2015$eda1)### Da la tabla clasificando hombres y mujeres(1,2) y su edad (1,2,3)
+rm(list = ls())
+help("subset")
+
+
+
+
+
+
+################################################################## PRUEBAS ########################################################
+
+mti2015$sex <- factor(mti2015$sex, levels=c(1,2), labels=c("HOMBRE", "MUJER"))# crea una nueva variable SEXO y la relaciona con la de la tabla SEX 
+# para dar nombre a los numeros 1= HOMBRE y 2=MUJER. Esta variable aparecera en a tabla si y solo si aun hay espacio, si no hay espacio no la veremos pero ahi estara
+wtd.table(mti2015$sex) #comprobamos  
+
+rm(list = ls())
+
+data.frame()
+ #amv<-read.table(header=TRUE,text="")
+
+
+var<-c("eda", "pos.ocu", "sex")
+tabla1 <- subset (mti2015,mti2015$sex == 2)
+tabla1 <- mti2015[,var]
+
+# empleados2 <- spss.get('Empleados_400.sav')
+# mti2015 <- read.sav("solorural.sav")
