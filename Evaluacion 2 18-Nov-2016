@@ -1,0 +1,114 @@
+###################### Evaluación 17-Noviembre-2016 ##############################
+
+rm(list = ls())
+install.packages("foreign")
+require(foreign)
+install.packages("questionr")
+require(questionr)
+#C:\Users\sala-c9\Desktop
+solorural<-data.frame(read.spss("C://Users//sala-c9//Desktop//solorural.sav"))
+ls(solorural)
+
+# Población de 5 a 17 años
+wtd.table (solorural$sex,  weights=solorural$fac_mti)
+
+
+
+# Tamaño de Muestra
+wtd.table (solorural$sex )
+
+# Ocupados
+wtd.table (solorural$sex, solorural$clase2==1 )
+
+# Porcentaje de Ocupados respecto al total
+# NIÑOS
+1414 *100/4061217
+# NIÑAS
+474 *100/3800117
+# TOTAL
+1888 *100/7861334
+
+# CARACT INDIV
+# Ocupados por Grupos de Edad
+ocu<-subset(solorural,solorural$clase2==1)
+class(ocu$eda)
+ocu$eda1[as.numeric(ocu$eda) >= 5 & as.numeric(ocu$eda)<= 9] <- 1
+ocu$eda1[as.numeric(ocu$eda) >= 10 & as.numeric(ocu$eda)<= 13] <- 2
+ocu$eda1[as.numeric(ocu$eda) >= 14 & as.numeric(ocu$eda)<= 17] <- 3
+table (ocu$eda1,ocu$eda)
+
+wtd.table (ocu$sex, ocu$eda1==2,weights=ocu$fac_mti)
+
+
+wtd.table (ocu$sex, ocu$eda1==3,weights=ocu$fac_mti)
+
+
+wtd.table (ocu$asis, ocu$sex,weights=ocu$fac_mti)
+
+# CARACT. HOGAR
+# Tamaño del hogar
+wtd.table (ocu$tam_hog, ocu$sex,weights=ocu$fac_mti)
+
+# Sexo del jefe del hogar
+wtd.table (ocu$sex_jefe, ocu$sex,weights=ocu$fac_mti)
+
+###################################EVALUACION 2,      18-NOV-2016
+
+
+# CARACT IND
+# Ocupados por Grupos de Edad
+ocu<-subset(solorural,solorural$c_ocu=='ocupado')
+
+table(ocu$t_per) 
+# library= require
+install.packages("plyr")
+library(plyr)
+
+ocu$t_per<-revalue(factor(ocu$t_per), c("4"=NA))
+table(ocu$t_per)
+
+table(ocu$sex) 
+
+table(ocu$eda1) 
+
+table(ocu$asis) 
+
+table(ocu$sex_jefe) 
+
+table(ocu$escol_jefe
+ocu$escol_jefe<-as.character(ocu$escol_jefe)
+ocu$escol_jefe<-revalue(factor(ocu$escol_jefe), c("7"=NA))
+table(ocu$escol_jefe)
+
+table(ocu$t_apo1)
+
+table(ocu$ocu_jefe) 
+
+# etiquetar variables 
+ocu$t_per <- factor(ocu$t_per, levels=c(1,2,3), labels = c("Familiar","No es un familiar","Trabaja solo o por su cuenta propia"))
+table(ocu$t_per)
+wtd.table(ocu$t_per, weights =ocu$fac_mti )
+
+ocu$escol_jefe <- factor(ocu$escol_jefe, levels=c(1,2,3,4,5,6), labels = c("Sin instrucción","Primaria incompleta","Primaria completa", "Secundaria incompleta", "Secundaria completa","Algún año de preparatoria o equivalente y más"))
+table(ocu$escol_jefe)
+
+ocu$eda1<-factor(ocu$eda1,levels = c(1,2,3), labels = c("5 a 9", "10 a 13", "14a 17"))
+table(ocu$eda1)
+
+wtd.table(ocu$t_per, weights =ocu$fac_mti )
+
+#########################################################   Modelo de Regresion Logistica 
+require(nnet)
+mod1<-multinom(t_per~1, data=ocu)
+summary(mod1)
+modfin<-multinom(t_per~sex+eda1+asis+sex_jefe+escol_jefe+t_apo1+ocu_jefe, data=ocu)
+g<-summary(modfin,Wald=T)
+print(g)
+
+# Tabla en LATEX, da un mejor formato al imprimir los datos
+install.packages("stargazer")
+library(stargazer)
+
+s<-stargazer(modfin, type='html', title = "Coefficients", summary = T) (modelo, tipo, titulo, y resumen)
+stargazer((modfin, type="text", title="mlogit", digits=2, out="C://Users//Sala-C15//Downloads//summary.txt"))
+###### No podemos hacerlo como pdf en lugar de txt, porque el error indicaque es necesario en txt para latex
