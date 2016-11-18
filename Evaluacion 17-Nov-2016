@@ -1,0 +1,87 @@
+###################### Evaluación 17-Noviembre-2016 ##############################
+
+rm(list = ls())
+install.packages("foreign")
+require(foreign)
+install.packages("questionr")
+require(questionr)
+#C:\Users\sala-c9\Desktop
+solorural<-data.frame(read.spss("C://Users//sala-c9//Desktop//solorural.sav"))
+ls(solorural)
+
+# Población de 5 a 17 años
+wtd.table (solorural$sex,  weights=solorural$fac_mti)
+
+# Tamaño de Muestra
+wtd.table (solorural$sex )
+
+# Ocupados
+wtd.table (solorural$sex, solorural$clase2==1 )
+
+# Porcentaje de Ocupados respecto al total
+# NIÑOS
+1414 *100/4061217
+# NIÑAS
+474 *100/3800117
+# TOTAL
+1888 *100/7861334
+
+# CARACT INDIV
+# Ocupados por Grupos de Edad
+ocu<-subset(solorural,solorural$clase2==1)
+class(ocu$eda)
+ocu$eda1[as.numeric(ocu$eda) >= 5 & as.numeric(ocu$eda)<= 9] <- 1
+ocu$eda1[as.numeric(ocu$eda) >= 10 & as.numeric(ocu$eda)<= 13] <- 2
+ocu$eda1[as.numeric(ocu$eda) >= 14 & as.numeric(ocu$eda)<= 17] <- 3
+table (ocu$eda1,ocu$eda)
+
+wtd.table (ocu$sex, ocu$eda1==2,weights=ocu$fac_mti)
+
+
+wtd.table (ocu$sex, ocu$eda1==3,weights=ocu$fac_mti)
+
+
+wtd.table (ocu$asis, ocu$sex,weights=ocu$fac_mti)
+
+# CARACT. HOGAR
+# Tamaño del hogar
+wtd.table (ocu$tam_hog, ocu$sex,weights=ocu$fac_mti)
+
+# Sexo del jefe del hogar
+wtd.table (ocu$sex_jefe, ocu$sex,weights=ocu$fac_mti)
+
+
+################################################################### PRUEBAS Y ADELANTO EN CLASE, 
+rm(list = ls())
+install.packages("Hmisc")
+library(Hmisc)
+
+setwd("C:/Users/Sala-C26/Desktop")
+mti2015 <- spss.get("solorural.sav")
+wtd.table(mti2015$eda1) # Da la frecuencia de los diferentes grupos de edades
+# 1= 5-9 años
+# 2= 10-14 años
+# 3= 15-17
+wtd.table(mti2015$sex,mti2015$eda1)### Da la tabla clasificando hombres y mujeres(1,2) y su edad (1,2,3)
+rm(list = ls())
+help("subset")
+
+################################################################## PRUEBAS ########################################################
+
+#mti2015$sex <- factor(mti2015$sex, levels=c(1,2), labels=c("HOMBRE", "MUJER"))# crea una nueva variable SEXO y la relaciona con la de la tabla SEX 
+# para dar nombre a los numeros 1= HOMBRE y 2=MUJER. Esta variable aparecera en a tabla si y solo si aun hay espacio, si no hay espacio no la veremos pero ahi estara
+#wtd.table(mti2015$sex) #comprobamos  
+
+#rm(list = ls())
+
+#data.frame()
+#amv<-read.table(header=TRUE,text="")
+
+
+#var<-c("eda", "pos.ocu", "sex")
+#tabla1 <- subset (mti2015,mti2015$sex == 2)
+#tabla1 <- mti2015[,var]
+
+# empleados2 <- spss.get('Empleados_400.sav')
+# mti2015 <- read.sav("solorural.sav")
+
